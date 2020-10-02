@@ -16,7 +16,7 @@ Developed to create .sql dumps from .csv files
 
   - database name
 
-- Load the dump 'municipios_e_secoes.sql' into the local database
+- Load the dump 'municipios.sql' and 'secoes\_(year).sql' from [here](https://drive.google.com/drive/folders/1mc0ybopl-KnEg7XdyOoR74Vhda-lpiNR?usp=sharing) into the local database
 
 - Download [this files](https://drive.google.com/drive/folders/1y-q3S5rZPwQ2POAuKzZQwYIf6Zbow5J8?usp=sharing) into the 'votos' and 'wider' folders
 
