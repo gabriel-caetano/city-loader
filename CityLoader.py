@@ -240,11 +240,10 @@ class CityLoader:
 # create a new instance of the loader
 # with the city name in lower case with graphic signals
 # and the state initials in upper case
-loader = CityLoader("são paulo", "SP")
+loader = CityLoader("capão da canoa", "RS")
 
 # execute the method dumpCity() to create a file with the dump of all the tables
-# loader.dumpCity()
-loader.dumpSingle(2018, "votes")
+loader.dumpCity()
 
 # finish() method save the file and close the conection with the database
 loader.finish()

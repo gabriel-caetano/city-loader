@@ -18,7 +18,7 @@ Developed to create .sql dumps from .csv files
 
 - Load the dump 'municipios_e_secoes.sql' into the local database
 
-- Download [this files](link) into the 'votos' and 'wider' folders
+- Download [this files](https://drive.google.com/drive/folders/1y-q3S5rZPwQ2POAuKzZQwYIf6Zbow5J8?usp=sharing) into the 'votos' and 'wider' folders
 
 ## How to use it
 
