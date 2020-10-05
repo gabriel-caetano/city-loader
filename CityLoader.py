@@ -2,6 +2,7 @@ import csv
 import codecs
 import mysql.connector
 import config
+from unidecode import unidecode
 
 ################################################################################
 ################################## IMPORTANT: ##################################
@@ -28,7 +29,8 @@ class CityLoader:
 		self.dump = ''
 
 	def __saveToFile(self):
-		file_name = f"dumps/{self.city.replace(' ','_')}_{self.state}.sql"
+		formatted_city_name = unidecode(self.city).replace(' ','_')
+		file_name = f"dumps/{formatted_city_name}_{self.state}.sql"
 		with codecs.open(file_name, 'w', 'utf8', errors='strict') as new_file:
 			new_file.write(self.dump)
 
@@ -125,11 +127,13 @@ class CityLoader:
 		path = self.__getPath(table, year)
 		indexOfCityCode = self.__getCityIndex(table, year)
 		count = 0
+		count_all = 0
 		with codecs.open(path, encoding = "utf-8", errors='strict') as csv_data:
 			reader = csv.reader(csv_data, delimiter=';', quotechar='"')
 			first = True
 			local_dump_part = ""
 			for row in reader:
+				count_all += 1
 				if row[indexOfCityCode] != self.city_code:  # skip if not the city
 					continue
 				count += 1
@@ -139,7 +143,7 @@ class CityLoader:
 					local_dump_part = ""
 				# formatting sql
 				if count % 5000 == 0:
-					print(count)
+					print(f"written lines: {count}, read lines: {count_all}")
 					local_dump_part += ';\n'
 					local_dump_part += start
 				else:
@@ -155,7 +159,7 @@ class CityLoader:
 			if table == "profiles":
 				local_dump += f"INSERT INTO perfis_{year}_municipio(municipio_id,nao_informado_educ,analfabeto,le,fund_inc,fund_comp,med_incomp,med_comp,sup_incomp,sup_comp,nao_informado_id,dezesseis,dezessete,dezoito,dezenove,vinte,id2124,id2529,id3034,id3539,id4044,id4549,id5054,id5559,id6064,id6569,id7074,id7579,id8084,id8589,id9094,id9599,id9999,feminino,gen_outros,masculino,casado,divorciado,nao_informado_civil,separado,solteiro,viuvo) SELECT municipio_id, SUM(nao_informado_educ), SUM(analfabeto), SUM(le), SUM(fund_inc), SUM(fund_comp), SUM(med_incomp), SUM(med_comp), SUM(sup_incomp), SUM(sup_comp), SUM(nao_informado_id), SUM(dezesseis), SUM(dezessete), SUM(dezoito), SUM(dezenove), SUM(vinte), SUM(id2124), SUM(id2529), SUM(id3034), SUM(id3539), SUM(id4044), SUM(id4549), SUM(id5054), SUM(id5559), SUM(id6064), SUM(id6569), SUM(id7074), SUM(id7579), SUM(id8084), SUM(id8589), SUM(id9094), SUM(id9599), SUM(id9999), SUM(feminino), SUM(gen_outros), SUM(masculino), SUM(casado), SUM(divorciado), SUM(nao_informado_civil), SUM(separado), SUM(solteiro), SUM(viuvo) FROM perfis_2018_sumario WHERE municipio_id = {self.city_id};\n\n"
 			self.dump += local_dump
-			print(f"Success in read file! table: {table}, {year}, {count} linhas.")
+			print(f"Success in read file! table: {table}, {year}, {count} written lines, {count_all} read lines.")
 			if table == "votes" and (year == 2014 or year ==2018):
 				self.dumpPresidentVotes(year)
 
@@ -170,17 +174,19 @@ class CityLoader:
 		path = self.__getPath('votes', year).replace(self.state, 'BR')
 		indexOfCityCode = self.__getCityIndex('votes', year)
 		count = 0
+		count_all = 0
 		with codecs.open(path, encoding="utf-8", errors='strict') as csv_data:
 			reader = csv.reader(csv_data, delimiter=';', quotechar='"')
 			first = True
 			local_dump_part = ""
 			for row in reader:
+				count_all += 1
 				if row[indexOfCityCode] != self.city_code:  # skip if not the city
 					continue
 				count += 1
 				# formatting sql
 				if count % 5000 == 0:
-					print(count)
+					print(f"written lines: {count}, read lines: {count_all}")
 					local_dump += local_dump_part
 					local_dump_part = ""
 				if count % 5000 == 0:
@@ -198,7 +204,7 @@ class CityLoader:
 
 		local_dump += ";\n\nUNLOCK TABLES;\n\n"
 		self.dump += local_dump
-		print(f"Success in read file! table: votos, {year}, presidentes, {count} linhas.")
+		print(f"Success in read file! table: votos, {year}, presidentes, {count} written lines, {count_all} read lines.")
 
 	# dump profiles tables of all years
 	def dumpProfilesSumary(self):
@@ -240,10 +246,11 @@ class CityLoader:
 # create a new instance of the loader
 # with the city name in lower case with graphic signals
 # and the state initials in upper case
-loader = CityLoader("capão da canoa", "RS")
+loader = CityLoader("rio de janeiro", "RJ")
 
 # execute the method dumpCity() to create a file with the dump of all the tables
 loader.dumpCity()
+# loader.dumpProfilesSumary()
 
 # finish() method save the file and close the conection with the database
 loader.finish()
