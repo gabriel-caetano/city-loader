@@ -3,6 +3,7 @@ import codecs
 import mysql.connector
 import config
 from unidecode import unidecode
+from datetime import datetime
 
 ################################################################################
 ################################## IMPORTANT: ##################################
@@ -24,6 +25,7 @@ class CityLoader:
 		self.cursor.execute(
 			f"SELECT cod_tse, id FROM municipios WHERE nome = '{self.city}' AND uf = '{self.state}';")
 		[(self.city_code_int, self.city_id_int)] = self.cursor.fetchall()
+		self.start = datetime.now()
 		self.city_code = str(self.city_code_int)
 		self.city_id = str(self.city_id_int)
 		self.dump = ''
@@ -119,6 +121,7 @@ class CityLoader:
 	# receive year as integer and table definition as strong "votes"/"profiles"
 	# and create the dump of the specified table
 	def dumpSingle(self, year, table):
+		startTime = datetime.now()
 		print(f"Dumping {table} {year} {self.city}...")
 		table_name = self.__getTableName(table, year)
 		table_column = self.__getTableColumn(table, year)
@@ -159,7 +162,10 @@ class CityLoader:
 			if table == "profiles":
 				local_dump += f"INSERT INTO perfis_{year}_municipio(municipio_id,nao_informado_educ,analfabeto,le,fund_inc,fund_comp,med_incomp,med_comp,sup_incomp,sup_comp,nao_informado_id,dezesseis,dezessete,dezoito,dezenove,vinte,id2124,id2529,id3034,id3539,id4044,id4549,id5054,id5559,id6064,id6569,id7074,id7579,id8084,id8589,id9094,id9599,id9999,feminino,gen_outros,masculino,casado,divorciado,nao_informado_civil,separado,solteiro,viuvo) SELECT municipio_id, SUM(nao_informado_educ), SUM(analfabeto), SUM(le), SUM(fund_inc), SUM(fund_comp), SUM(med_incomp), SUM(med_comp), SUM(sup_incomp), SUM(sup_comp), SUM(nao_informado_id), SUM(dezesseis), SUM(dezessete), SUM(dezoito), SUM(dezenove), SUM(vinte), SUM(id2124), SUM(id2529), SUM(id3034), SUM(id3539), SUM(id4044), SUM(id4549), SUM(id5054), SUM(id5559), SUM(id6064), SUM(id6569), SUM(id7074), SUM(id7579), SUM(id8084), SUM(id8589), SUM(id9094), SUM(id9599), SUM(id9999), SUM(feminino), SUM(gen_outros), SUM(masculino), SUM(casado), SUM(divorciado), SUM(nao_informado_civil), SUM(separado), SUM(solteiro), SUM(viuvo) FROM perfis_2018_sumario WHERE municipio_id = {self.city_id};\n\n"
 			self.dump += local_dump
+			finish = datetime.now()
+			time_spent = finish - startTime
 			print(f"Success in read file! table: {table}, {year}, {count} written lines, {count_all} read lines.")
+			print(f"Time spent: {time_spent}")
 			if table == "votes" and (year == 2014 or year ==2018):
 				self.dumpPresidentVotes(year)
 
@@ -238,6 +244,9 @@ class CityLoader:
 
 	# save the file and close the db connection
 	def finish(self):
+		finish = datetime.now()
+		time = finish - self.start
+		print(f"Finished dumping {self.city}, {self.state} in {time}")
 		self.__saveToFile()
 		self.cursor.close()
 		self.db.close()
@@ -249,8 +258,9 @@ class CityLoader:
 loader = CityLoader("rio de janeiro", "RJ")
 
 # execute the method dumpCity() to create a file with the dump of all the tables
-loader.dumpCity()
+# loader.dumpCity()
 # loader.dumpProfilesSumary()
+loader.dumpSingle(2018, 'votes')
 
 # finish() method save the file and close the conection with the database
 loader.finish()
