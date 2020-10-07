@@ -51,15 +51,19 @@ Developed in Python to create .sql dumps from .csv files with pre-defined struct
     table must be a string "votes" or "profiles"
 
   - `loader.dumpProfilesSumary()`
+
     Use to dump profiles tables of all years;
 
   - `loader.dumpVotes()`
+
     Use to dump votes tables of all years;
 
   - `loader.dumpYear(year)`
+
     Pass the year as param (same as above) to dump tables of the year;
 
   - `loader.dumpCity()`
+
     Dump all tables of the city;
 
 ## How to run the code
