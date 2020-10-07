@@ -46,29 +46,29 @@ Developed in Python to create .sql dumps from .csv files with pre-defined struct
 
   - `loader.dumpSingle(year, table)`
 
-    Pass the year and the table as params to create the dump of the specified table;
+    Pass the year and the table as params to create the dump of the specified table,
     year must be 2012, 2014, 2016, 2018, representing the election years available
     table must be a string "votes" or "profiles"
 
   - `loader.dumpProfilesSumary()`
 
-    Use to dump profiles tables of all years;
+    Use to dump profiles tables of all years
 
   - `loader.dumpVotes()`
 
-    Use to dump votes tables of all years;
+    Use to dump votes tables of all years
 
   - `loader.dumpYear(year)`
 
-    Pass the year as param (same as above) to dump tables of the year;
+    Pass the year as param (same as above) to dump tables of the year
 
   - `loader.dumpCity()`
 
-    Dump all tables of the city;
+    Dump all tables of the city
 
 ## How to run the code
 
-In the cmd/terminal use the following command:
+In the cmd/terminal use the following command
 `python ~path/CityLoader.py`
 
 Obs.: The bigger the city the longer it takes to load everything (specially the votes)
