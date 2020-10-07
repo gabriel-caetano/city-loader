@@ -84,7 +84,7 @@ class CityLoader:
 		if table == "profiles":
 			if ((year == 2016 or year == 2014) and self.state == "DF") or year < 2013:
 				self.cursor.execute(
-					f"SELECT id FROM secoes_2016 WHERE municipio_id = '{self.city_id}' AND nr_zona = '{fixed_row[1]}' AND nr_secao = '{fixed_row[2]}';")
+					f"SELECT id FROM secoes_{year} WHERE municipio_id = '{self.city_id}' AND nr_zona = '{fixed_row[1]}' AND nr_secao = '{fixed_row[2]}';")
 				try:
 					[(secao_id,)] = self.cursor.fetchall()
 					new_row = f"( '{self.city_id}', '{secao_id}', '{fixed_row[3]}', '{fixed_row[4]}', '{fixed_row[5]}', '{fixed_row[6]}', '{fixed_row[7]}', '{fixed_row[8]}', '{fixed_row[9]}', '{fixed_row[10]}', '{fixed_row[11]}', '{fixed_row[12]}', '{fixed_row[13]}', '{fixed_row[14]}', '{fixed_row[15]}', '{fixed_row[16]}', '{fixed_row[17]}', '{fixed_row[18]}', '{fixed_row[19]}', '{fixed_row[20]}', '{fixed_row[21]}', '{fixed_row[22]}', '{fixed_row[23]}', '{fixed_row[24]}', '{fixed_row[25]}', '{fixed_row[31]}', '{fixed_row[26]}', '{fixed_row[27]}', '{fixed_row[28]}', '{fixed_row[29]}', '{fixed_row[30]}', '{fixed_row[32]}')"
