@@ -202,7 +202,7 @@ class CityLoader:
 			local_dump += local_dump_part
 			local_dump += ";\n\nUNLOCK TABLES;\n\n"
 			if table == "profiles":
-				local_dump += f"INSERT INTO perfis_{year}_municipio(municipio_id,nao_informado_educ,analfabeto,le,fund_inc,fund_comp,med_incomp,med_comp,sup_incomp,sup_comp,nao_informado_id,dezesseis,dezessete,dezoito,dezenove,vinte,id2124,id2529,id3034,id3539,id4044,id4549,id5054,id5559,id6064,id6569,id7074,id7579,id8084,id8589,id9094,id9599,id9999,feminino,gen_outros,masculino,casado,divorciado,nao_informado_civil,separado,solteiro,viuvo) SELECT municipio_id, SUM(nao_informado_educ), SUM(analfabeto), SUM(le), SUM(fund_inc), SUM(fund_comp), SUM(med_incomp), SUM(med_comp), SUM(sup_incomp), SUM(sup_comp), SUM(nao_informado_id), SUM(dezesseis), SUM(dezessete), SUM(dezoito), SUM(dezenove), SUM(vinte), SUM(id2124), SUM(id2529), SUM(id3034), SUM(id3539), SUM(id4044), SUM(id4549), SUM(id5054), SUM(id5559), SUM(id6064), SUM(id6569), SUM(id7074), SUM(id7579), SUM(id8084), SUM(id8589), SUM(id9094), SUM(id9599), SUM(id9999), SUM(feminino), SUM(gen_outros), SUM(masculino), SUM(casado), SUM(divorciado), SUM(nao_informado_civil), SUM(separado), SUM(solteiro), SUM(viuvo) FROM perfis_2018_sumario WHERE municipio_id = {self.city_id};\n\n"
+				local_dump += f"INSERT INTO perfis_{year}_municipio(municipio_id,nao_informado_educ,analfabeto,le,fund_inc,fund_comp,med_incomp,med_comp,sup_incomp,sup_comp,nao_informado_id,dezesseis,dezessete,dezoito,dezenove,vinte,id2124,id2529,id3034,id3539,id4044,id4549,id5054,id5559,id6064,id6569,id7074,id7579,id8084,id8589,id9094,id9599,id9999,feminino,gen_outros,masculino,casado,divorciado,nao_informado_civil,separado,solteiro,viuvo) SELECT municipio_id, SUM(nao_informado_educ), SUM(analfabeto), SUM(le), SUM(fund_inc), SUM(fund_comp), SUM(med_incomp), SUM(med_comp), SUM(sup_incomp), SUM(sup_comp), SUM(nao_informado_id), SUM(dezesseis), SUM(dezessete), SUM(dezoito), SUM(dezenove), SUM(vinte), SUM(id2124), SUM(id2529), SUM(id3034), SUM(id3539), SUM(id4044), SUM(id4549), SUM(id5054), SUM(id5559), SUM(id6064), SUM(id6569), SUM(id7074), SUM(id7579), SUM(id8084), SUM(id8589), SUM(id9094), SUM(id9599), SUM(id9999), SUM(feminino), SUM(gen_outros), SUM(masculino), SUM(casado), SUM(divorciado), SUM(nao_informado_civil), SUM(separado), SUM(solteiro), SUM(viuvo) FROM perfis_{year}_sumario WHERE municipio_id = {self.city_id};\n\n"
 			self.dump += local_dump
 			finish = datetime.now()
 			time_spent = finish - startTime
@@ -251,7 +251,7 @@ class CityLoader:
 # create a new instance of the loader
 # with the city name in lower case with graphic signals
 # and the state initials in upper case
-loader = CityLoader("uberlandia", "MG")
+loader = CityLoader("porto alegre", "RS")
 
 # execute the method dumpCity() to create a file with the dump of all the tables
 loader.dumpCity()
