@@ -119,8 +119,6 @@ class CityLoader:
 
 		return new_row
 
-	# complement votes table with the president votes
-	# only works for presidential elections (2018 so far)
 	def __dumpPresidentVotes(self, year):
 		print(f"Dumping president votes {year}...")
 		table_name = self.__getTableName('votes', year)
@@ -142,9 +140,7 @@ class CityLoader:
 				count += 1
 				# formatting sql
 				if count % 5000 == 0:
-					print('\r'+last_print)
-					last_print = f"written lines: {count}, read lines: {count_all}"
-					print(f"written lines: {count}, read lines: {count_all}")
+					print(f"written lines: {count}, read lines: {count_all}", end="\r")
 					local_dump += local_dump_part
 					local_dump_part = ""
 				if count % 5000 == 0:
@@ -164,7 +160,6 @@ class CityLoader:
 		self.dump += local_dump
 		print(f"Success in read file! table: votos, {year}, presidentes, {count} written lines, {count_all} read lines.")
 
-
 	# receive year as integer and table definition as strong "votes"/"profiles"
 	# and create the dump of the specified table
 	def dumpSingle(self, year, table):
@@ -182,7 +177,6 @@ class CityLoader:
 			reader = csv.reader(csv_data, delimiter=';', quotechar='"')
 			first = True
 			local_dump_part = ""
-			last_print = ""
 			for row in reader:
 				count_all += 1
 				if row[indexOfCityCode] != self.city_code:  # skip if not the city
@@ -194,12 +188,7 @@ class CityLoader:
 					local_dump_part = ""
 				# formatting sql
 				if count % 5000 == 0:
-					if last_print != "":
-						sys.stdout.write("\033[F") #back to previous line 
-						sys.stdout.write("\033[K") #clear line 
-						sys.stdout.flush()
-					last_print = f"written lines: {count}, read lines: {count_all}"
-					print(last_print)
+					print(f"written lines: {count}, read lines: {count_all}", end="\r")
 					local_dump_part += ';\n'
 					local_dump_part += start
 				else:
@@ -224,7 +213,6 @@ class CityLoader:
 
 	# dump profiles tables of all years
 	def dumpProfilesSumary(self):
-		print("Dumping profiles")
 		self.dumpSingle(2018, "profiles")
 		self.dumpSingle(2016, "profiles")
 		self.dumpSingle(2014, "profiles")
@@ -232,7 +220,6 @@ class CityLoader:
 
 	# dump votes tables of all years
 	def dumpVotes(self):
-		print("Dumping votes...")
 		self.dumpSingle(2018, "votes")
 		self.dumpSingle(2014, "votes")
 		if self.state != "DF":
@@ -248,7 +235,6 @@ class CityLoader:
 
 	# dump everything possible from the city
 	def dumpCity(self):
-		print(f"Dumping {self.city}...")
 		self.dumpProfilesSumary()
 		self.dumpVotes()
 
@@ -265,7 +251,7 @@ class CityLoader:
 # create a new instance of the loader
 # with the city name in lower case with graphic signals
 # and the state initials in upper case
-loader = CityLoader("capão da canoa", "RS")
+loader = CityLoader("uberlandia", "MG")
 
 # execute the method dumpCity() to create a file with the dump of all the tables
 loader.dumpCity()
