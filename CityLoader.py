@@ -118,6 +118,50 @@ class CityLoader:
 
 		return new_row
 
+	# complement votes table with the president votes
+	# only works for presidential elections (2018 so far)
+	def __dumpPresidentVotes(self, year):
+		print(f"Dumping president votes {year}...")
+		table_name = self.__getTableName('votes', year)
+		table_column = self.__getTableColumn('votes', year)
+		start = f"INSERT INTO {table_name} {table_column} VALUES "
+		local_dump = f"LOCK TABLES {table_name} WRITE;\n\n" + start
+		path = self.__getPath('votes', year).replace(self.state, 'BR')
+		indexOfCityCode = self.__getCityIndex('votes', year)
+		count = 0
+		count_all = 0
+		with codecs.open(path, encoding="utf-8", errors='strict') as csv_data:
+			reader = csv.reader(csv_data, delimiter=';', quotechar='"')
+			first = True
+			local_dump_part = ""
+			for row in reader:
+				count_all += 1
+				if row[indexOfCityCode] != self.city_code:  # skip if not the city
+					continue
+				count += 1
+				# formatting sql
+				if count % 5000 == 0:
+					print(f"written lines: {count}, read lines: {count_all}")
+					local_dump += local_dump_part
+					local_dump_part = ""
+				if count % 5000 == 0:
+					local_dump_part += ';\n'
+					local_dump_part += start
+				else:
+					if not first:
+						local_dump_part += ",\n"
+					if first:
+						first = False
+
+				local_dump_part += self.__constructRow(row, "votes", year)
+			local_dump += local_dump_part
+		# saving file
+
+		local_dump += ";\n\nUNLOCK TABLES;\n\n"
+		self.dump += local_dump
+		print(f"Success in read file! table: votos, {year}, presidentes, {count} written lines, {count_all} read lines.")
+
+
 	# receive year as integer and table definition as strong "votes"/"profiles"
 	# and create the dump of the specified table
 	def dumpSingle(self, year, table):
@@ -167,50 +211,7 @@ class CityLoader:
 			print(f"Success in read file! table: {table}, {year}, {count} written lines, {count_all} read lines.")
 			print(f"Time spent: {time_spent}")
 			if table == "votes" and (year == 2014 or year ==2018):
-				self.dumpPresidentVotes(year)
-
-	# complement votes table with the president votes
-	# only works for presidential elections (2018 so far)
-	def dumpPresidentVotes(self, year):
-		print(f"Dumping president votes {year}...")
-		table_name = self.__getTableName('votes', year)
-		table_column = self.__getTableColumn('votes', year)
-		start = f"INSERT INTO {table_name} {table_column} VALUES "
-		local_dump = f"LOCK TABLES {table_name} WRITE;\n\n" + start
-		path = self.__getPath('votes', year).replace(self.state, 'BR')
-		indexOfCityCode = self.__getCityIndex('votes', year)
-		count = 0
-		count_all = 0
-		with codecs.open(path, encoding="utf-8", errors='strict') as csv_data:
-			reader = csv.reader(csv_data, delimiter=';', quotechar='"')
-			first = True
-			local_dump_part = ""
-			for row in reader:
-				count_all += 1
-				if row[indexOfCityCode] != self.city_code:  # skip if not the city
-					continue
-				count += 1
-				# formatting sql
-				if count % 5000 == 0:
-					print(f"written lines: {count}, read lines: {count_all}")
-					local_dump += local_dump_part
-					local_dump_part = ""
-				if count % 5000 == 0:
-					local_dump_part += ';\n'
-					local_dump_part += start
-				else:
-					if not first:
-						local_dump_part += ",\n"
-					if first:
-						first = False
-
-				local_dump_part += self.__constructRow(row, "votes", year)
-			local_dump += local_dump_part
-		# saving file
-
-		local_dump += ";\n\nUNLOCK TABLES;\n\n"
-		self.dump += local_dump
-		print(f"Success in read file! table: votos, {year}, presidentes, {count} written lines, {count_all} read lines.")
+				self.__dumpPresidentVotes(year)
 
 	# dump profiles tables of all years
 	def dumpProfilesSumary(self):
@@ -259,8 +260,18 @@ loader = CityLoader("rio de janeiro", "RJ")
 
 # execute the method dumpCity() to create a file with the dump of all the tables
 # loader.dumpCity()
+
+# or execute the method dumpProfiles() or dumpVotes() to load all the respective
+# tables of that city
 # loader.dumpProfilesSumary()
-loader.dumpSingle(2018, 'votes')
+
+# or execute the method dumpYear(year) to load all the tables from that year
+# and city
+# loader.dumpYear(2018)
+
+# or execute the method dumpSingle(year, table) to load that specific table
+loader.dumpSingle(2016, 'votes')
+
 
 # finish() method save the file and close the conection with the database
 loader.finish()
