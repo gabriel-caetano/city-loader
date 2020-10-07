@@ -29,6 +29,7 @@ Developed in Python to create .sql dumps from .csv files with pre-defined struct
 - Load the dump 'municipios.sql' and 'secoes\_(year).sql' from [here](https://drive.google.com/drive/folders/1mc0ybopl-KnEg7XdyOoR74Vhda-lpiNR?usp=sharing) into the local database;
 
 - Download [this files](https://drive.google.com/drive/folders/1y-q3S5rZPwQ2POAuKzZQwYIf6Zbow5J8?usp=sharing) into the 'votos' and 'wider' folders.
+
   Obs.: It’s good to have an editor to work with code like VSCode.
 
 ## How to use it
@@ -69,6 +70,7 @@ Developed in Python to create .sql dumps from .csv files with pre-defined struct
 ## How to run the code
 
 In the cmd/terminal use the following command
+
 `python ~path/CityLoader.py`
 
 Obs.: The bigger the city the longer it takes to load everything (specially the votes)
