@@ -1,3 +1,4 @@
+import sys
 import csv
 import codecs
 import mysql.connector
@@ -141,6 +142,8 @@ class CityLoader:
 				count += 1
 				# formatting sql
 				if count % 5000 == 0:
+					print('\r'+last_print)
+					last_print = f"written lines: {count}, read lines: {count_all}"
 					print(f"written lines: {count}, read lines: {count_all}")
 					local_dump += local_dump_part
 					local_dump_part = ""
@@ -179,6 +182,7 @@ class CityLoader:
 			reader = csv.reader(csv_data, delimiter=';', quotechar='"')
 			first = True
 			local_dump_part = ""
+			last_print = ""
 			for row in reader:
 				count_all += 1
 				if row[indexOfCityCode] != self.city_code:  # skip if not the city
@@ -190,7 +194,12 @@ class CityLoader:
 					local_dump_part = ""
 				# formatting sql
 				if count % 5000 == 0:
-					print(f"written lines: {count}, read lines: {count_all}")
+					if last_print != "":
+						sys.stdout.write("\033[F") #back to previous line 
+						sys.stdout.write("\033[K") #clear line 
+						sys.stdout.flush()
+					last_print = f"written lines: {count}, read lines: {count_all}"
+					print(last_print)
 					local_dump_part += ';\n'
 					local_dump_part += start
 				else:
@@ -256,10 +265,10 @@ class CityLoader:
 # create a new instance of the loader
 # with the city name in lower case with graphic signals
 # and the state initials in upper case
-loader = CityLoader("rio de janeiro", "RJ")
+loader = CityLoader("capão da canoa", "RS")
 
 # execute the method dumpCity() to create a file with the dump of all the tables
-# loader.dumpCity()
+loader.dumpCity()
 
 # or execute the method dumpProfiles() or dumpVotes() to load all the respective
 # tables of that city
@@ -270,7 +279,7 @@ loader = CityLoader("rio de janeiro", "RJ")
 # loader.dumpYear(2018)
 
 # or execute the method dumpSingle(year, table) to load that specific table
-loader.dumpSingle(2016, 'votes')
+# loader.dumpSingle(2016, 'votes')
 
 
 # finish() method save the file and close the conection with the database
