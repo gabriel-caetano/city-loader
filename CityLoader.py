@@ -208,9 +208,11 @@ class CityLoader:
 			time_spent = finish - startTime
 			print(f"Success in read file! table: {table}, {year}, {count} written lines, {count_all} read lines.")
 			print(f"Time spent: {time_spent}")
-			if table == "votes" and (year == 2014 or year ==2018):
-				self.__dumpPresidentVotes(year)
-
+			if table == "votes":
+				if year == 2014 or year ==2018:
+					self.__dumpPresidentVotes(year)
+				self.dump += f"INSERT INTO votos_{year}_municipio (municipio_id, turno, ds_cargo, nr_votavel, nm_candidato, qt_votos) SELECT municipio_id, turno, ds_cargo, nr_votavel, nm_candidato, sum(qt_votos) from votos_{year} WHERE municipio_id = '{self.city_id}' GROUP BY turno, ds_cargo, nr_votavel;\n\n"
+			
 	# dump profiles tables of all years
 	def dumpProfilesSumary(self):
 		self.dumpSingle(2018, "profiles")
@@ -251,7 +253,7 @@ class CityLoader:
 # create a new instance of the loader
 # with the city name in lower case with graphic signals
 # and the state initials in upper case
-loader = CityLoader("porto alegre", "RS")
+loader = CityLoader("taquara", "RS")
 
 # execute the method dumpCity() to create a file with the dump of all the tables
 loader.dumpCity()
